@@ -205,7 +205,6 @@ namespace GallJungSan
                                     Console.WriteLine($"{post.gall_num}번글 파싱 완료");
                                 }
                             }
-                            break;
                         }
                     }
                 }
