@@ -13,13 +13,14 @@ namespace GallJungSan
     {
         static string GallCode = "";
         static bool IsMgall = false;
+        static uint Rank = 10;
         static uint PageHint = 1;
         static DateTime StartDate = DateTime.Now;
         static DateTime EndDate = DateTime.MinValue;
         static bool OpenChromeWindow = true;
         static bool ViewChromeLog = false;
 
-        static void ListToString(List<GallPost> postList, StringBuilder builder, int count)
+        static void ListToString(List<GallPost> postList, StringBuilder builder, uint count)
         {
             int index = 0;
             foreach (var post in postList)
@@ -138,6 +139,7 @@ namespace GallJungSan
 
             try { GallCode = ini["Setting"]["GallCode"].ToString(); } catch { Console.WriteLine("GallCode 값이 존재하지 않습니다"); pass = false; }
             try { IsMgall = ini["Setting"]["IsMgall"].ToBool(); } catch { Console.WriteLine("IsMgall 값이 존재하지 않습니다"); pass = false; }
+            try { Rank = uint.Parse(ini["Setting"]["Rank"].ToString()); } catch { Rank = 10; }
             try { StartDate = DateTime.Parse(ini["Setting"]["StartDate"].ToString()); } catch { StartDate = DateTime.Now; }
             try { EndDate = DateTime.Parse(ini["Setting"]["EndDate"].ToString()); } catch { Console.WriteLine("EndDate 값이 존재하지 않습니다"); pass = false; }
             try { PageHint = uint.Parse(ini["Setting"]["PageHint"].ToString()); } catch { PageHint = 1; }
@@ -158,6 +160,7 @@ namespace GallJungSan
 
                 Console.WriteLine($"{nameof(GallCode)}         : {GallCode}");
                 Console.WriteLine($"{nameof(IsMgall)}          : {IsMgall}");
+                Console.WriteLine($"{nameof(Rank)}             : {Rank}");
                 Console.WriteLine($"{nameof(StartDate)}        : {StartDate}");
                 Console.WriteLine($"{nameof(EndDate)}          : {EndDate}");
                 Console.WriteLine($"{nameof(PageHint)}         : {PageHint}");
@@ -189,13 +192,13 @@ namespace GallJungSan
                                 if (!post.is_common_post)
                                     continue;
                             
-                                if (post.gall_date < EndDate)
+                                if (post.gall_date.Date < EndDate)
                                 {
                                     loopEnd = true;
                                     break;
                                 }
 
-                                if (post.gall_date < StartDate)
+                                if (post.gall_date.Date > StartDate)
                                     continue;
 
                                 if (!postNumSet.TryGetValue(post.gall_num, out var actualValue))
@@ -215,26 +218,25 @@ namespace GallJungSan
                     Console.WriteLine("수리 요청은 소녀전선2 갤러리");
                 }
 
-                int printCount = 30;
                 StringBuilder builder = new StringBuilder();
 
                 var ordered = postList.OrderByDescending(p => p.gall_recommend).ToList();
-                builder.AppendLine($"추천 정렬 top{printCount}");
-                ListToString(ordered, builder, printCount);
+                builder.AppendLine($"추천 정렬 top{Rank}");
+                ListToString(ordered, builder, Rank);
                 builder.AppendLine("");
                 builder.AppendLine("");
                 builder.AppendLine("");
 
                 ordered = postList.OrderByDescending(p => p.gall_count).ToList();
-                builder.AppendLine($"조회수 정렬 top{printCount}");
-                ListToString(ordered, builder, printCount);
+                builder.AppendLine($"조회수 정렬 top{Rank}");
+                ListToString(ordered, builder, Rank);
                 builder.AppendLine("");
                 builder.AppendLine("");
                 builder.AppendLine("");
 
                 ordered = postList.OrderByDescending(p => p.gall_reply).ToList();
-                builder.AppendLine($"댓글 정렬 top{printCount}");
-                ListToString(ordered, builder, printCount);
+                builder.AppendLine($"댓글 정렬 top{Rank}");
+                ListToString(ordered, builder, Rank);
                 builder.AppendLine("");
                 builder.AppendLine("");
                 builder.AppendLine("");
